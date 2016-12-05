@@ -114,8 +114,8 @@ int cols = src.cols;
 cout<<"ok";
 vector<Rect> boundRect2;
 //atlas a(cols,rows,nb);
-a->add_image(boundRect);
-boundRect2=a->Get();
+a.add_image(boundRect);
+boundRect2=a.Get();
   //![zeroMat]
   /// Draw polygonal contour + bonding rects + circles
   Mat drawing = Mat::zeros( threshold_output.size(), CV_8UC3 );
@@ -141,6 +141,6 @@ for(int ii=0;ii<boundRect2.size();ii++){
   namedWindow( "Contours", WINDOW_AUTOSIZE );
   imshow( "Contours", drawing );
   //![showDrawings]
-  return *a;
+  return a;
 }
 

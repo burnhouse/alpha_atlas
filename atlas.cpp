@@ -27,8 +27,8 @@ atlas::atlas(int hg,int lg,int nbl){
 void atlas::add_image(vector <Rect> bb){
     cpt_image+=1;
     vector<Rect> boundings;
-    cout<<"ok";
-    ///recherche les rectangles imbriqués pour les eliminer
+
+    ///get rif of inner rectangles which are useless
     bool b=true;
     //Rect *a;
     for(int it=1 ; it < bb.size(); it++ ) {
@@ -43,15 +43,14 @@ void atlas::add_image(vector <Rect> bb){
             boundings.push_back(bb[it]);
         }
     }
-    //boundings=bb;
-    cout<<"hg"<<boundings.size();
-    ///on trouve les ordonnées des lignes en float
+
+    ///find the lines
         vector <float> yligne;
         for(int i=0;i<nb_lignes;i++){
             yligne.push_back(i*(float)hauteur_gene/((float)nb_lignes));
             cout<<" yl "<<i <<" "<<i*(float)hauteur_gene/((float)nb_lignes)<<" ";
         }
-    ///pour chaque rectangle on trouve sa ligne et on met dans ligne_proche et sa distance à la ligne dans dist_ligne_bas
+    ///for each rectangle set the nearest line on ligne_bas
         int lproche;
         float dist_bas;
         float dist_haut;
@@ -74,7 +73,7 @@ void atlas::add_image(vector <Rect> bb){
             dist_ligne_bas.push_back(dist_bas);
             dist_ligne_haut.push_back(dist_haut);
         }
-    ///on trouve le maximum des distances à la ligne haut
+    ///max offset up from the line
         int max_height=0;
         for(int it=0 ; it < dist_ligne_haut.size(); it++ ) {
             if(dist_ligne_haut[it]>max_height){
@@ -82,33 +81,43 @@ void atlas::add_image(vector <Rect> bb){
             }
 
         }
-    ///on trouve le maximum des distances à la ligne bas
-        vector<float>::iterator v2 = dist_ligne_bas.begin();
+
+    ///max offset down from the line
         float dlmin=0.0;
         for(it=0 ; it < dist_ligne_bas.size(); it++ ) {
             if(dist_ligne_bas[it]<dlmin){
 
                 dlmin=dist_ligne_bas[it];
+
             }
-            cout<<dist_ligne_bas[it]<<"\n";
         }
-        cout <<"dlmin"<<dlmin;
 
 
 
-    ///pour chaque rect on baisse y
+    ///reset the coordinates of the rectangles
+        float wit=0;
         for(int i=0;i<boundings.size();i++){
-            //Point pt1 =  Point(boundings[i].x, boundings[i].y+dist_ligne_bas[i]-dlmax+boundings[i].height);
-            //Point pt2 =  Point(boundings[i].x+boundings[i].width, boundings[i].y+dist_ligne_bas[i]-dlmax);
             boundings_sortie.push_back(Rect(boundings[i].x ,  boundings[i].y+dist_ligne_haut[i]-max_height , boundings[i].width ,max_height+abs(dlmin)));
             nom_rect.push_back("\\");
             nb_image.push_back(cpt_image);
         }
+
+    ///find the average width
+        for(int i=0;i<boundings_sortie.size();i++){
+           wit+=boundings_sortie[i].width;
+        }
+        average_width=wit/((float)boundings_sortie.size());
 }
+
+
+
 
 atlas::atlas(){
 
 }
+
+
+
 
 
 atlas::~atlas(void){
@@ -128,18 +137,28 @@ string atlas::get_nom(int index){
 string atlas::get_text(){
     string txt="";
     for(int i=0;i<boundings_sortie.size();i++){
+     ///name of the char
         txt+=nom_rect[i];
         txt+="\t";
+     ///bottom
         txt+=to_string((float)(boundings_sortie[i].y+boundings_sortie[i].height)/((float)hauteur_gene));
         txt+="\t";
+     ///up
         txt+=to_string(((float)boundings_sortie[i].y)/((float)largeur_gene));
         txt+="\t";
+     ///left
         txt+=to_string(((float)boundings_sortie[i].x)/((float)hauteur_gene));
         txt+="\t";
+     ///right
         txt+=to_string(((float)(boundings_sortie[i].x+boundings_sortie[i].width))/((float)largeur_gene));
         txt+="\t";
+    ///number of the image
         txt+=to_string(nb_image[i]);
         txt+="\n";
+    ///relative width (width/average_width)
+        txt+=to_string((float)boundings_sortie[i].width/(float)average_width);
+        txt+="\n";
+
 
     }
     return txt;

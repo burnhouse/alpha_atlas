@@ -19,6 +19,7 @@ class atlas{
 		vector <Rect> boundings_sortie;///sortie avec les carrers qui correspondent aux uv
         vector <string> nom_rect;
         vector <int>nb_image;
+        float average_width;
         int cpt_image=0;
 
 	public:
