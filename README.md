@@ -2,7 +2,7 @@
 Automatic alphabet atlas with a gui (useful for opengl for example)
 It is based on boundings rectangles from opencv and Qt.
 
-# Instalation
+# Run
 The easiest way is to download Qt creator and configure it for opencv.
 
 # Output
