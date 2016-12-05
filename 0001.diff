@@ -1,0 +1,1166 @@
+
+
+diff --git a/atlas.cpp b/atlas.cpp
+--- a/atlas.cpp
++++ b/atlas.cpp
+@@ -14,90 +14,101 @@ using namespace cv;
+ 
+ 
+ 
+-atlas::atlas(int hg,int lg,int nbl,vector <Rect> bb){
++atlas::atlas(int hg,int lg,int nbl){
+ 		hauteur_gene=hg;
+ 		largeur_gene=lg;
+ 		nb_lignes=nbl;
+-		vector<Rect> boundings;
+-cout<<"ok";
+-		//recherche les rectangles imbriqués pour les eliminer
+-		bool b=true;
+-		//Rect *a;
+-		for(int it=1 ; it < bb.size(); it++ ) {
+-			b=true;
+-			for(int it2=1 ; it2 < bb.size(); it2++ ) {
+-
+-				if(((bb[it2] & bb[it])==bb[it])&it!=it2){
+-					b=false;
+-				}
+-			}
+-			if(b){cout<<"ok";
+-				boundings.push_back(bb[it]);
+-			}
+-		}
+-		//boundings=bb;
+-		cout<<"hg"<<boundings.size();
+-		///on trouve les ordonnées des lignes en float
+-			vector <float> yligne;
+-			for(int i=0;i<nb_lignes;i++){
+-				yligne.push_back(i*(float)hauteur_gene/((float)nb_lignes));
+-				cout<<" yl "<<i <<" "<<i*(float)hauteur_gene/((float)nb_lignes)<<" ";
+-			}
+-		///pour chaque rectangle on trouve sa ligne et on met dans ligne_proche et sa distance à la ligne dans dist_ligne_bas
+-			int lproche;
+-			float dist_bas;
+-			float dist_haut;
+-			vector <float> dist_ligne_bas;
+-			vector <float> dist_ligne_haut;
+-			int it;
+-			for(int it=0 ; it < boundings.size(); it++ ) {
+-				lproche=0;
+-				dist_bas=hauteur_gene;
+-				dist_haut=0.0;
+-				for(int i=0;i<nb_lignes;i++){
+-					if(abs(yligne[i]-(boundings[it].y+boundings[it].height))<abs(dist_bas)){
+-						lproche=i;
+-						dist_bas=(yligne[i]-(boundings[it].y+boundings[it].height));
+-						dist_haut=yligne[i]-boundings[it].y;
+-					}
+-				
+-				}
+-				ligne_proche.push_back(lproche);cout<<" bas rect"<<boundings[it].y+boundings[it].height<<" distance" <<dist_bas<<" "<<" ligne proche"<<lproche<<"\n";
+-				dist_ligne_bas.push_back(dist_bas);
+-				dist_ligne_haut.push_back(dist_haut);
+-			}
+-		///on trouve le maximum des distances à la ligne haut
+-			int max_height=0;
+-			for(int it=0 ; it < dist_ligne_haut.size(); it++ ) {
+-				if(dist_ligne_haut[it]>max_height){
+-					max_height=dist_ligne_haut[it];
+-				}
+-				
+-			}
+-		///on trouve le maximum des distances à la ligne bas
+-			vector<float>::iterator v2 = dist_ligne_bas.begin();
+-			float dlmin=0.0;
+-			int j=0;
+-			for(it=0 ; it < dist_ligne_bas.size(); it++ ) {
+-				if(dist_ligne_bas[it]<dlmin){
+-					
+-					dlmin=dist_ligne_bas[it];
+-				}
+-				cout<<dist_ligne_bas[it]<<"\n";
+-			}
+-			cout <<"dlmin"<<dlmin;
+-		
+-			
+-			
+-		//pour chaque rect on baisse y
+-			for(int i=0;i<boundings.size();i++){
+-				//Point pt1 =  Point(boundings[i].x, boundings[i].y+dist_ligne_bas[i]-dlmax+boundings[i].height);
+-				//Point pt2 =  Point(boundings[i].x+boundings[i].width, boundings[i].y+dist_ligne_bas[i]-dlmax);
+-				boundings_sortie.push_back(Rect(boundings[i].x ,  boundings[i].y+dist_ligne_haut[i]-max_height , boundings[i].width ,max_height+abs(dlmin)));
+-			}
++
++
++
+ 			
+ }
+ 
++void atlas::add_image(vector <Rect> bb){
++    cpt_image+=1;
++    vector<Rect> boundings;
++    cout<<"ok";
++    ///recherche les rectangles imbriqués pour les eliminer
++    bool b=true;
++    //Rect *a;
++    for(int it=1 ; it < bb.size(); it++ ) {
++        b=true;
++        for(int it2=1 ; it2 < bb.size(); it2++ ) {
++
++            if(((bb[it2] & bb[it])==bb[it])&it!=it2){
++                b=false;
++            }
++        }
++        if(b){cout<<"ok";
++            boundings.push_back(bb[it]);
++        }
++    }
++    //boundings=bb;
++    cout<<"hg"<<boundings.size();
++    ///on trouve les ordonnées des lignes en float
++        vector <float> yligne;
++        for(int i=0;i<nb_lignes;i++){
++            yligne.push_back(i*(float)hauteur_gene/((float)nb_lignes));
++            cout<<" yl "<<i <<" "<<i*(float)hauteur_gene/((float)nb_lignes)<<" ";
++        }
++    ///pour chaque rectangle on trouve sa ligne et on met dans ligne_proche et sa distance à la ligne dans dist_ligne_bas
++        int lproche;
++        float dist_bas;
++        float dist_haut;
++        vector <float> dist_ligne_bas;
++        vector <float> dist_ligne_haut;
++        int it;
++        for(int it=0 ; it < boundings.size(); it++ ) {
++            lproche=0;
++            dist_bas=hauteur_gene;
++            dist_haut=0.0;
++            for(int i=0;i<nb_lignes;i++){
++                if(abs(yligne[i]-(boundings[it].y+boundings[it].height))<abs(dist_bas)){
++                    lproche=i;
++                    dist_bas=(yligne[i]-(boundings[it].y+boundings[it].height));
++                    dist_haut=yligne[i]-boundings[it].y;
++                }
++
++            }
++            ligne_proche.push_back(lproche);cout<<" bas rect"<<boundings[it].y+boundings[it].height<<" distance" <<dist_bas<<" "<<" ligne proche"<<lproche<<"\n";
++            dist_ligne_bas.push_back(dist_bas);
++            dist_ligne_haut.push_back(dist_haut);
++        }
++    ///on trouve le maximum des distances à la ligne haut
++        int max_height=0;
++        for(int it=0 ; it < dist_ligne_haut.size(); it++ ) {
++            if(dist_ligne_haut[it]>max_height){
++                max_height=dist_ligne_haut[it];
++            }
++
++        }
++    ///on trouve le maximum des distances à la ligne bas
++        vector<float>::iterator v2 = dist_ligne_bas.begin();
++        float dlmin=0.0;
++        for(it=0 ; it < dist_ligne_bas.size(); it++ ) {
++            if(dist_ligne_bas[it]<dlmin){
++
++                dlmin=dist_ligne_bas[it];
++            }
++            cout<<dist_ligne_bas[it]<<"\n";
++        }
++        cout <<"dlmin"<<dlmin;
++
++
++
++    ///pour chaque rect on baisse y
++        for(int i=0;i<boundings.size();i++){
++            //Point pt1 =  Point(boundings[i].x, boundings[i].y+dist_ligne_bas[i]-dlmax+boundings[i].height);
++            //Point pt2 =  Point(boundings[i].x+boundings[i].width, boundings[i].y+dist_ligne_bas[i]-dlmax);
++            boundings_sortie.push_back(Rect(boundings[i].x ,  boundings[i].y+dist_ligne_haut[i]-max_height , boundings[i].width ,max_height+abs(dlmin)));
++            nom_rect.push_back("\\");
++            nb_image.push_back(cpt_image);
++        }
++}
++
++atlas::atlas(){
++
++}
+ 
+ 
+ atlas::~atlas(void){
+@@ -105,6 +116,36 @@ atlas::~atlas(void){
+ 	boundings_sortie.clear();
+ }
+ 
++void atlas::set_nom(string s,int index){
++    nom_rect[index]=s;
++}
++
++string atlas::get_nom(int index){
++    return nom_rect[index];
++
++}
++
++string atlas::get_text(){
++    string txt="";
++    for(int i=0;i<boundings_sortie.size();i++){
++        txt+=nom_rect[i];
++        txt+="\t";
++        txt+=to_string((float)(boundings_sortie[i].y+boundings_sortie[i].height)/((float)hauteur_gene));
++        txt+="\t";
++        txt+=to_string(((float)boundings_sortie[i].y)/((float)largeur_gene));
++        txt+="\t";
++        txt+=to_string(((float)boundings_sortie[i].x)/((float)hauteur_gene));
++        txt+="\t";
++        txt+=to_string(((float)(boundings_sortie[i].x+boundings_sortie[i].width))/((float)largeur_gene));
++        txt+="\t";
++        txt+=to_string(nb_image[i]);
++        txt+="\n";
++
++    }
++    return txt;
++
++}
++
+ vector <Rect> atlas::Get(){
+ 	return boundings_sortie;
+ }
+diff --git a/atlas.h b/atlas.h
+--- a/atlas.h
++++ b/atlas.h
+@@ -10,17 +10,24 @@ using namespace std;
+ using namespace cv;
+ 
+ class atlas{
+-	private:
++    protected:
+ 		int hauteur_gene;///hauteur de l'image d'origine
+ 		int largeur_gene;///largeur de l'image d'origine (entree)
+ 		int nb_lignes;//nombre de ligne de l atlas (entree)
+ 		vector <Rect> boundings;///les rectangles d'origine (entree)
+ 		vector <int> ligne_proche;///pour chaque rectangle, la ligne à laquelle il app
+ 		vector <Rect> boundings_sortie;///sortie avec les carrers qui correspondent aux uv
+-		
++        vector <string> nom_rect;
++        vector <int>nb_image;
++        int cpt_image=0;
+ 
+ 	public:
+-		atlas(int hg,int lg,int nbl,vector <Rect> b);
++        atlas(int ,int ,int );
++        string get_text();
++        atlas();
++        virtual void add_image(vector <Rect> );
++        void set_nom(string ,int );
++        string get_nom(int );
+ 		~atlas();
+ 		vector <Rect> Get();
+ };
+diff --git a/atlas_i.cpp b/atlas_i.cpp
+--- a/atlas_i.cpp
++++ b/atlas_i.cpp
+@@ -1,6 +1,50 @@
+ #include "atlas_i.h"
++#include <iostream>
++#include <cmath>
++#include <vector>
+ 
++#include <stdio.h>
++#include <stdlib.h>
++
++#include "opencv2/highgui/highgui.hpp"
++#include "opencv2/imgproc/imgproc.hpp"
++using namespace std;
++using namespace cv;
+ atlas_i::atlas_i()
+ {
+ 
+ }
++atlas_i::atlas_i(int a,int b,int c):atlas(a,b,c)
++{
++
++}
++
++
++void atlas_i::add_image(vector <Rect> bb){
++    cpt_image+=1;
++    vector<Rect> boundings;
++    cout<<"ok";
++    ///recherche les rectangles imbriqués pour les eliminer
++    bool b=true;
++    //Rect *a;
++    for(int it=1 ; it < bb.size(); it++ ) {
++        b=true;
++        for(int it2=1 ; it2 < bb.size(); it2++ ) {
++
++            if(((bb[it2] & bb[it])==bb[it])&it!=it2){
++                b=false;
++            }
++        }
++        if(b){cout<<"ok";
++            boundings.push_back(bb[it]);
++        }
++    }
++    boundings_sortie=boundings;
++
++
++    ///pour chaque rect on baisse y
++        for(int i=0;i<boundings.size();i++){
++            nom_rect.push_back("\\");
++            nb_image.push_back(cpt_image);
++        }
++}
+diff --git a/atlas_i.h b/atlas_i.h
+--- a/atlas_i.h
++++ b/atlas_i.h
+@@ -1,11 +1,13 @@
+ #ifndef ATLAS_I_H
+ #define ATLAS_I_H
++#include "atlas.h"
+ 
+-
+-class atlas_i
++class atlas_i:public atlas
+ {
+ public:
+     atlas_i();
++    atlas_i(int,int,int );
++    void add_image(vector <Rect> ) ;
+ };
+ 
+-#endif // ATLAS_I_H
+\ No newline at end of file
++#endif // ATLAS_I_H
+diff --git a/atlas_qt.pro b/atlas_qt.pro
+--- a/atlas_qt.pro
++++ b/atlas_qt.pro
+@@ -11,10 +11,32 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+ TARGET = atlas_qt
+ TEMPLATE = app
+ 
++INCLUDEPATH += /usr/include/opencv
++
++LIBS += -L /usr/local/lib/
++LIBS += -lopencv_core
++LIBS += -lopencv_imgproc
++LIBS += -lopencv_highgui
++LIBS += -lopencv_ml
++LIBS += -lopencv_video
++LIBS += -lopencv_features2d
++LIBS += -lopencv_calib3d
++LIBS += -lopencv_objdetect
++LIBS += -lopencv_contrib
++LIBS += -lopencv_legacy
++LIBS += -lopencv_flann
+ 
+ SOURCES += main.cpp\
+-        mainwindow.cpp
++        mainwindow.cpp \
++    atlas.cpp \
++    divers.cpp \
++    dialog.cpp \
++    atlas_i.cpp
+ 
+-HEADERS  += mainwindow.h
++HEADERS  += mainwindow.h \
++    atlas.h \
++    dialog.h \
++    atlas_i.h
+ 
+-FORMS    += mainwindow.ui
++FORMS    += mainwindow.ui \
++    dialog.ui
+diff --git a/dialog.cpp b/dialog.cpp
+--- a/dialog.cpp
++++ b/dialog.cpp
+@@ -1,13 +1,29 @@
+ #include "dialog.h"
+ #include "ui_dialog.h"
++#include <QPushButton>
+ 
+ Dialog::Dialog(QWidget *parent) :
+     QDialog(parent),
+     ui(new Ui::Dialog)
+ {
+     ui->setupUi(this);
++     QObject::connect(ui->dialog_ok, SIGNAL(clicked()), this,  SLOT(set_nbl())  );
+ }
+ 
++
++void Dialog::set_mw(MainWindow *m){
++    mw=m;
++}
++
++void Dialog::set_nbl(){
++    bool b=ui->checkBox->isChecked() ;
++    mw->nbl=ui->spinBox->value();
++
++    mw->init(b);
++    this->close();
++}
++
++
+ Dialog::~Dialog()
+ {
+     delete ui;
+diff --git a/dialog.h b/dialog.h
+--- a/dialog.h
++++ b/dialog.h
+@@ -1,6 +1,6 @@
+ #ifndef DIALOG_H
+ #define DIALOG_H
+-
++#include "mainwindow.h"
+ #include <QDialog>
+ 
+ namespace Ui {
+@@ -13,9 +13,12 @@ class Dialog : public QDialog
+ 
+ public:
+     explicit Dialog(QWidget *parent = 0);
++    void set_mw(MainWindow *m);
+     ~Dialog();
+-
++public slots:
++    void set_nbl();
+ private:
++    MainWindow *mw;
+     Ui::Dialog *ui;
+ };
+ 
+diff --git a/dialog.ui b/dialog.ui
+--- a/dialog.ui
++++ b/dialog.ui
+@@ -1,7 +1,5 @@
++<?xml version="1.0" encoding="UTF-8"?>
+ <ui version="4.0">
+- <author/>
+- <comment/>
+- <exportmacro/>
+  <class>Dialog</class>
+  <widget class="QDialog" name="Dialog">
+   <property name="geometry">
+@@ -15,57 +13,56 @@
+   <property name="windowTitle">
+    <string>Dialog</string>
+   </property>
+-  <widget class="QDialogButtonBox" name="buttonBox">
++  <widget class="QSpinBox" name="spinBox">
+    <property name="geometry">
+     <rect>
+-     <x>30</x>
++     <x>300</x>
++     <y>110</y>
++     <width>61</width>
++     <height>51</height>
++    </rect>
++   </property>
++  </widget>
++  <widget class="QLabel" name="label">
++   <property name="geometry">
++    <rect>
++     <x>10</x>
++     <y>83</y>
++     <width>251</width>
++     <height>111</height>
++    </rect>
++   </property>
++   <property name="text">
++    <string>Enter the number of lines of your atlas</string>
++   </property>
++  </widget>
++  <widget class="QPushButton" name="dialog_ok">
++   <property name="geometry">
++    <rect>
++     <x>240</x>
+      <y>240</y>
+-     <width>341</width>
+-     <height>32</height>
++     <width>121</width>
++     <height>31</height>
+     </rect>
+    </property>
+-   <property name="orientation">
+-    <enum>Qt::Horizontal</enum>
++   <property name="text">
++    <string>OK</string>
++   </property>
++  </widget>
++  <widget class="QCheckBox" name="checkBox">
++   <property name="geometry">
++    <rect>
++     <x>84</x>
++     <y>29</y>
++     <width>241</width>
++     <height>51</height>
++    </rect>
+    </property>
+-   <property name="standardButtons">
+-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
++   <property name="text">
++    <string>texture for an alphabet and char</string>
+    </property>
+   </widget>
+  </widget>
+- <pixmapfunction/>
+  <resources/>
+- <connections>
+-  <connection>
+-   <sender>buttonBox</sender>
+-   <signal>accepted()</signal>
+-   <receiver>Dialog</receiver>
+-   <slot>accept()</slot>
+-   <hints>
+-    <hint type="sourcelabel">
+-     <x>248</x>
+-     <y>254</y>
+-    </hint>
+-    <hint type="destinationlabel">
+-     <x>157</x>
+-     <y>274</y>
+-    </hint>
+-   </hints>
+-  </connection>
+-  <connection>
+-   <sender>buttonBox</sender>
+-   <signal>rejected()</signal>
+-   <receiver>Dialog</receiver>
+-   <slot>reject()</slot>
+-   <hints>
+-    <hint type="sourcelabel">
+-     <x>316</x>
+-     <y>260</y>
+-    </hint>
+-    <hint type="destinationlabel">
+-     <x>286</x>
+-     <y>274</y>
+-    </hint>
+-   </hints>
+-  </connection>
+- </connections>
++ <connections/>
+ </ui>
+diff --git a/divers.cpp b/divers.cpp
+--- a/divers.cpp
++++ b/divers.cpp
+@@ -0,0 +1,147 @@
++#include "atlas.h"
++#include "atlas_i.h"
++#include <opencv2/opencv.hpp>
++using namespace std;
++using namespace cv;
++
++
++
++atlas thresh_callback(Mat &src,int nb,atlas *a, void* )
++{int thresh = 100;
++    int max_thresh = 255;
++    RNG rng(12345);
++  Mat threshold_output;
++  vector<vector<Point> > contours;
++  vector<Vec4i> hierarchy;
++
++  //![threshold]
++  /// Detect edges using Threshold
++  threshold( src, threshold_output, thresh, 255, THRESH_BINARY );
++  //![threshold]
++
++  //![findContours]
++  /// Find contours
++  findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
++  //![findContours]
++
++  /// Approximate contours to polygons + get bounding rects and circles
++  vector<vector<Point> > contours_poly( contours.size() );
++  vector<Rect> boundRect( contours.size() );
++  vector<Point2f>center( contours.size() );
++  vector<float>radius( contours.size() );
++cout<<"ok";
++  //![al lthework]
++  for( size_t i = 0; i < contours.size(); i++ )
++  {
++    approxPolyDP( Mat(contours[i]), contours_poly[i], 5, true );
++    boundRect[i] = boundingRect( Mat(contours_poly[i]) );
++ minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
++  }
++  //![allthework]
++int rows = src.rows;
++int cols = src.cols;
++
++cout<<"ok";
++vector<Rect> boundRect2;
++//atlas a(cols,rows,nb);
++a->add_image(boundRect);
++boundRect2=a->Get();
++  //![zeroMat]
++  /// Draw polygonal contour + bonding rects + circles
++  Mat drawing = Mat::zeros( threshold_output.size(), CV_8UC3 );
++  //![zeroMat]
++Mat subb;
++string s;
++/*for(int ii=0;ii<boundRect2.size();ii++){
++    Mat subb(src,boundRect2[ii]);
++    imshow("ee",subb);waitKey(0);
++}
++  //![forContour]
++  for( size_t i = 0; i< contours.size(); i++ )
++  {
++   Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
++ //drawContours( drawing, contours_poly, (int)i, color, 1, 8, vector<Vec4i>(), 0, Point() );
++    rectangle( drawing, boundRect2[i].tl(), boundRect2[i].br(), color, 2, 8, 0 );
++ // circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
++  }
++  //![forContour]
++
++  //![showDrawings]
++  /// Show in a window
++  namedWindow( "Contours", WINDOW_AUTOSIZE );
++  imshow( "Contours", drawing );*/
++  //![showDrawings]
++  return *a;
++}
++
++atlas thresh_callback_view(Mat &src,int nb,atlas *a2, void* )
++{
++    atlas a(*a2);
++    int thresh = 100;
++    int max_thresh = 255;
++    RNG rng(12345);
++  Mat threshold_output;
++  vector<vector<Point> > contours;
++  vector<Vec4i> hierarchy;
++
++  //![threshold]
++  /// Detect edges using Threshold
++  threshold( src, threshold_output, thresh, 255, THRESH_BINARY );
++  //![threshold]
++
++  //![findContours]
++  /// Find contours
++  findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
++  //![findContours]
++
++  /// Approximate contours to polygons + get bounding rects and circles
++  vector<vector<Point> > contours_poly( contours.size() );
++  vector<Rect> boundRect( contours.size() );
++  vector<Point2f>center( contours.size() );
++  vector<float>radius( contours.size() );
++cout<<"ok";
++  //![al lthework]
++  for( size_t i = 0; i < contours.size(); i++ )
++  {
++    approxPolyDP( Mat(contours[i]), contours_poly[i], 5, true );
++    boundRect[i] = boundingRect( Mat(contours_poly[i]) );
++ minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
++  }
++  //![allthework]
++int rows = src.rows;
++int cols = src.cols;
++
++cout<<"ok";
++vector<Rect> boundRect2;
++//atlas a(cols,rows,nb);
++a->add_image(boundRect);
++boundRect2=a->Get();
++  //![zeroMat]
++  /// Draw polygonal contour + bonding rects + circles
++  Mat drawing = Mat::zeros( threshold_output.size(), CV_8UC3 );
++  //![zeroMat]
++Mat subb;
++string s;
++for(int ii=0;ii<boundRect2.size();ii++){
++    Mat subb(src,boundRect2[ii]);
++    imshow("ee",subb);waitKey(0);
++}
++  //![forContour]
++  for( size_t i = 0; i< contours.size(); i++ )
++  {
++   Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
++ //drawContours( drawing, contours_poly, (int)i, color, 1, 8, vector<Vec4i>(), 0, Point() );
++    rectangle( drawing, boundRect2[i].tl(), boundRect2[i].br(), color, 2, 8, 0 );
++ // circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
++  }
++  //![forContour]
++
++  //![showDrawings]
++  /// Show in a window
++  namedWindow( "Contours", WINDOW_AUTOSIZE );
++  imshow( "Contours", drawing );
++  //![showDrawings]
++  return *a;
++}
++
++
+diff --git a/main.cpp b/main.cpp
+--- a/main.cpp
++++ b/main.cpp
+@@ -1,11 +1,27 @@
+ #include "mainwindow.h"
+ #include <QApplication>
++#include "dialog.h"
++#include <opencv2/opencv.hpp>
++#include "atlas.h"
++using namespace cv;
++Mat src;
++int thresh2 = 100;
++int max_thresh2 = 255;
++RNG rng2(12345);
+ 
+ int main(int argc, char *argv[])
+ {
++
++
++
+     QApplication a(argc, argv);
++
+     MainWindow w;
+     w.show();
++    Dialog d; d.show();
++      d.set_mw(&w);
+ 
+     return a.exec();
+ }
++
++
+diff --git a/mainwindow.cpp b/mainwindow.cpp
+--- a/mainwindow.cpp
++++ b/mainwindow.cpp
+@@ -1,14 +1,212 @@
+ #include "mainwindow.h"
++#include "dialog.h"
+ #include "ui_mainwindow.h"
++#include <opencv2/opencv.hpp>
++#include <QPushButton>
++#include <QGraphicsView>
++#include <QtWidgets>
++#include <QtGui>
++#include <QString>
++#include "atlas.h"
++#include "atlas_i.h"
++#include <divers.cpp>
++#include <fstream>
++using namespace cv;
++using namespace std;
++Mat src_gray;
+ 
+ MainWindow::MainWindow(QWidget *parent) :
+     QMainWindow(parent),
+     ui(new Ui::MainWindow)
++        {
++
++        }
++
++void MainWindow::init(bool b){
++    //open the image file
++    QString ll=QFileDialog::getOpenFileName( );
++    //set to a opencv mat
++    src = new Mat(imread(ll.toStdString(), IMREAD_COLOR ));
++    //create a empty atlas
++    if(b){
++        atlas_=new atlas(src->cols,src->rows,nbl);//if the tickbox is on create a alphabet atlas
++    }
++    else{
++       atlas_=new atlas_i(src->cols,src->rows,nbl);//else regular, just bounding the pictures by rectangles
++    }
++
++    //get the boundings rect with the thesk call function
++    cvtColor( *src, src_gray, COLOR_BGR2GRAY );
++    blur( src_gray, src_gray, Size(3,3) );
++    thresh_callback(src_gray, nbl,atlas_, 0 );
++
++            //connect the slots to buttons
++            index=1;
++            ui->setupUi(this);
++            QObject::connect(ui->previous, SIGNAL(clicked()), this,  SLOT(im_prev()));
++            QObject::connect(ui->save, SIGNAL(clicked()), this,  SLOT(save()));
++            QObject::connect(ui->next, SIGNAL(clicked()), this,  SLOT(im_suiv()));
++            QObject::connect(ui->new_2, SIGNAL(clicked()), this,  SLOT(new_img()));
++            set_image_contour(src);
++}
++
++
++void MainWindow::new_img(){
++    //open the image file
++    QString ll=QFileDialog::getOpenFileName( );
++    //set to a opencv mat
++    src = new Mat(imread(ll.toStdString(), IMREAD_COLOR ));
++    //get the boundings rect with the thesk call function
++    cvtColor( *src, src_gray, COLOR_BGR2GRAY );
++    blur( src_gray, src_gray, Size(3,3) );
++    thresh_callback(src_gray, nbl,atlas_, 0 );
++}
++
++
++/************************************
++ * Save the atlas
++ *
++*/
++void MainWindow::save(){
++       QString filename = QFileDialog::getSaveFileName();
++       ofstream fichier(filename.toStdString().c_str(), ios::out);  // on ouvre le fichier en lecture
++              if(fichier)
++              {
++
++              }
++              else  {
++                      cerr << "Impossible d'ouvrir le fichier !" << endl;}
++         fichier<<atlas_->get_text();
++         fichier.close();
++}
++
++
++
++
++
++/************************************
++ * go to next texture
++ *
++*/
++ void MainWindow::im_suiv(){
++     if(!ui->texture_name->toPlainText().isEmpty()){
++     atlas_->set_nom((ui->texture_name->toPlainText().toStdString()),index);
++     ui->texture_name->clear();
++     }
++
++    index+=1;
++    if(index==atlas_->Get().size()){
++        index-=1;
++    }
++
++    //show the name of the texture if already set
++    ui->save_name->setText(QString::fromStdString(atlas_->get_nom(index)));
++
++
++
++    Mat subb(*src,atlas_->Get()[index]);
++
++     //convert cv image to qimage
++    cv::Mat temp(subb.cols,subb.rows,subb.type()); // make the same cv::Mat
++    cvtColor(subb, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
++    QImage image= QImage((uchar*) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
++
++
++    //set image to the graphic view
++    QGraphicsScene *scene=new QGraphicsScene();
++    QGraphicsPixmapItem *item= new QGraphicsPixmapItem(QPixmap::fromImage(image));
++    scene->addItem(item);
++    ui->graphicsView->setScene(scene);
++}
++
++
++
++ /************************************
++  * go to previous texture
++  *
++ */
++
++ void MainWindow::im_prev(){
++     if(!ui->texture_name->toPlainText().isEmpty()){
++     atlas_->set_nom((ui->texture_name->toPlainText().toStdString()),index);
++     ui->texture_name->clear();
++     }
++
++    index-=1;
++    if(index==0){
++        index+=1;
++    }
++
++    //show the name of the texture if already set
++    ui->save_name->setText(QString::fromStdString(atlas_->get_nom(index)));
++
++
++
++    Mat subb(*src,atlas_->Get()[index]);
++
++     //convert cv image to qimage
++    cv::Mat temp(subb.cols,subb.rows,subb.type()); // make the same cv::Mat
++    cvtColor(subb, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
++    QImage image= QImage((uchar*) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
++
++
++    //set image to the graphic view
++    QGraphicsScene *scene=new QGraphicsScene();
++    QGraphicsPixmapItem *item= new QGraphicsPixmapItem(QPixmap::fromImage(image));
++    scene->addItem(item);
++    ui->graphicsView->setScene(scene);
++}
++
++
++
++ /************************************
++  * show the texture image in the windows
++  *
++ */
++void MainWindow::set_image_contour(Mat *sr)
++    {
++    //src=sr;
++    //atlas_=b2;
++    Mat subb(*src,atlas_->Get()[index]);
++
++    //show the name of the texture if already set
++    ui->save_name->setText(QString::fromStdString(atlas_->get_nom(index)));
++
++
++        //convert cv image to qimage
++        cv::Mat temp(subb.cols,subb.rows,subb.type()); // make the same cv::Mat
++        cvtColor(subb, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
++        QImage image= QImage((uchar*) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
++
++        //set image to the graphic view
++        QGraphicsScene *scene=new QGraphicsScene();
++        QGraphicsPixmapItem *item= new QGraphicsPixmapItem(QPixmap::fromImage(image));
++        scene->addItem(item);
++        ui->graphicsView->setScene(scene);
++
++}
++
++
++
++
++
++/************************************
++ * convert opencv image to Qimage
++ *
++*/
++QImage  MainWindow::Mat2QImage(cv::Mat const& ss)
+ {
+-    ui->setupUi(this);
++     cv::Mat temp(ss.cols,ss.rows,ss.type()); // make the same cv::Mat
++     cvtColor(ss, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
++     QImage dest= QImage((uchar*) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
++     return dest;
+ }
+ 
++
++
++
++
+ MainWindow::~MainWindow()
+ {
+-    delete ui;
++    delete ui;delete atlas_;
+ }
+diff --git a/mainwindow.h b/mainwindow.h
+--- a/mainwindow.h
++++ b/mainwindow.h
+@@ -1,8 +1,11 @@
+ #ifndef MAINWINDOW_H
+ #define MAINWINDOW_H
+-
++#include <opencv2/opencv.hpp>
++#include <QImage>
++#include <QPushButton>
+ #include <QMainWindow>
+-
++#include "atlas.h"
++using namespace cv;
+ namespace Ui {
+ class MainWindow;
+ }
+@@ -12,11 +15,26 @@ class MainWindow : public QMainWindow
+     Q_OBJECT
+ 
+ public:
+-    explicit MainWindow(QWidget *parent = 0);
+-    ~MainWindow();
++      explicit MainWindow(QWidget *parent = 0);
++      void init(bool);
+ 
++      QImage Mat2QImage(cv::Mat const& );
++      int nbl;
++      void set_image_contour(Mat*);
++       ~MainWindow();
++
++public slots:
++    void new_img();
++    void save();
++    void im_suiv();
++    void im_prev();
+ private:
++
++    QPushButton suivant;
+     Ui::MainWindow *ui;
++    Mat *src;
++    atlas *atlas_;
++    int index;
+ };
+ 
+ #endif // MAINWINDOW_H
+diff --git a/mainwindow.ui b/mainwindow.ui
+--- a/mainwindow.ui
++++ b/mainwindow.ui
+@@ -1,24 +1,168 @@
++<?xml version="1.0" encoding="UTF-8"?>
+ <ui version="4.0">
+  <class>MainWindow</class>
+- <widget class="QMainWindow" name="MainWindow" >
+-  <property name="geometry" >
++ <widget class="QMainWindow" name="MainWindow">
++  <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+-    <width>400</width>
+-    <height>300</height>
++    <width>775</width>
++    <height>661</height>
+    </rect>
+   </property>
+-  <property name="windowTitle" >
++  <property name="windowTitle">
+    <string>MainWindow</string>
+   </property>
+-  <widget class="QMenuBar" name="menuBar" />
+-  <widget class="QToolBar" name="mainToolBar" />
+-  <widget class="QWidget" name="centralWidget" />
+-  <widget class="QStatusBar" name="statusBar" />
++  <widget class="QWidget" name="centralWidget">
++   <widget class="QPushButton" name="next">
++    <property name="geometry">
++     <rect>
++      <x>540</x>
++      <y>460</y>
++      <width>191</width>
++      <height>51</height>
++     </rect>
++    </property>
++    <property name="text">
++     <string>next</string>
++    </property>
++   </widget>
++   <widget class="QGraphicsView" name="graphicsView">
++    <property name="geometry">
++     <rect>
++      <x>65</x>
++      <y>101</y>
++      <width>651</width>
++      <height>341</height>
++     </rect>
++    </property>
++   </widget>
++   <widget class="QTextEdit" name="texture_name">
++    <property name="geometry">
++     <rect>
++      <x>250</x>
++      <y>450</y>
++      <width>81</width>
++      <height>70</height>
++     </rect>
++    </property>
++   </widget>
++   <widget class="QTextBrowser" name="save_name">
++    <property name="geometry">
++     <rect>
++      <x>340</x>
++      <y>10</y>
++      <width>256</width>
++      <height>71</height>
++     </rect>
++    </property>
++    <property name="minimumSize">
++     <size>
++      <width>256</width>
++      <height>71</height>
++     </size>
++    </property>
++   </widget>
++   <widget class="QPushButton" name="previous">
++    <property name="geometry">
++     <rect>
++      <x>340</x>
++      <y>460</y>
++      <width>171</width>
++      <height>51</height>
++     </rect>
++    </property>
++    <property name="text">
++     <string>previous</string>
++    </property>
++   </widget>
++   <widget class="QLabel" name="label">
++    <property name="geometry">
++     <rect>
++      <x>140</x>
++      <y>20</y>
++      <width>231</width>
++      <height>51</height>
++     </rect>
++    </property>
++    <property name="text">
++     <string>Atually saved for the texture</string>
++    </property>
++   </widget>
++   <widget class="QLabel" name="label_2">
++    <property name="geometry">
++     <rect>
++      <x>28</x>
++      <y>453</y>
++      <width>201</width>
++      <height>71</height>
++     </rect>
++    </property>
++    <property name="text">
++     <string>Enter the name of the texture:</string>
++    </property>
++   </widget>
++   <widget class="QPushButton" name="save">
++    <property name="geometry">
++     <rect>
++      <x>30</x>
++      <y>541</y>
++      <width>711</width>
++      <height>61</height>
++     </rect>
++    </property>
++    <property name="text">
++     <string>Save the atlas</string>
++    </property>
++   </widget>
++   <widget class="QPushButton" name="new_2">
++    <property name="geometry">
++     <rect>
++      <x>620</x>
++      <y>20</y>
++      <width>81</width>
++      <height>41</height>
++     </rect>
++    </property>
++    <property name="text">
++     <string>New image</string>
++    </property>
++   </widget>
++   <widget class="QPushButton" name="view">
++    <property name="geometry">
++     <rect>
++      <x>10</x>
++      <y>0</y>
++      <width>101</width>
++      <height>51</height>
++     </rect>
++    </property>
++    <property name="text">
++     <string>view bounding</string>
++    </property>
++   </widget>
++  </widget>
++  <widget class="QMenuBar" name="menuBar">
++   <property name="geometry">
++    <rect>
++     <x>0</x>
++     <y>0</y>
++     <width>775</width>
++     <height>19</height>
++    </rect>
++   </property>
++  </widget>
++  <widget class="QToolBar" name="mainToolBar">
++   <attribute name="toolBarArea">
++    <enum>TopToolBarArea</enum>
++   </attribute>
++   <attribute name="toolBarBreak">
++    <bool>false</bool>
++   </attribute>
++  </widget>
++  <widget class="QStatusBar" name="statusBar"/>
+  </widget>
+- <layoutDefault spacing="6" margin="11" />
+- <pixmapfunction></pixmapfunction>
++ <layoutdefault spacing="6" margin="11"/>
+  <resources/>
+  <connections/>
+ </ui>
