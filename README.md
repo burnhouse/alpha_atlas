@@ -3,7 +3,7 @@ Automatic alphabet atlas with a gui (useful for opengl for example)
 It is based on boundings rectangles from opencv and Qt.
 
 # Instalation
-tThe easiest way is to download Qt creator and configure it for opencv.
+The easiest way is to download Qt creator and configure it for opencv.
 
 # Output
 The uv will be saved in a tsv file :
