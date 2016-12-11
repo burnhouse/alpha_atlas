@@ -4,7 +4,6 @@
 #include <opencv2/opencv.hpp>
 #include <QPushButton>
 #include <QGraphicsView>
-#include <QtWidgets>
 #include <QtGui>
 #include <QString>
 #include "atlas.h"

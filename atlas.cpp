@@ -3,10 +3,10 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-
+#include <QString>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 using namespace std;
@@ -135,33 +135,33 @@ string atlas::get_nom(int index){
 }
 
 string atlas::get_text(){
-    string txt="";
+    QString txt="";
     for(int i=0;i<boundings_sortie.size();i++){
      ///name of the char
-        txt+=nom_rect[i];
-        txt+="\t";
+        txt+=QString::fromStdString(nom_rect[i]);
+        txt+=QString::fromStdString("\t");
      ///bottom
-        txt+=to_string((float)(boundings_sortie[i].y+boundings_sortie[i].height)/((float)hauteur_gene));
-        txt+="\t";
+        txt+=QString::number((float)(boundings_sortie[i].y+boundings_sortie[i].height)/((float)hauteur_gene));
+        txt+=QString::fromStdString("\t");
      ///up
-        txt+=to_string(((float)boundings_sortie[i].y)/((float)largeur_gene));
-        txt+="\t";
+        txt+=QString::number(((float)boundings_sortie[i].y)/((float)largeur_gene));
+        txt+=QString::fromStdString("\t");
      ///left
-        txt+=to_string(((float)boundings_sortie[i].x)/((float)hauteur_gene));
+        txt+=QString::number(((float)boundings_sortie[i].x)/((float)hauteur_gene));
         txt+="\t";
      ///right
-        txt+=to_string(((float)(boundings_sortie[i].x+boundings_sortie[i].width))/((float)largeur_gene));
-        txt+="\t";
+        txt+=QString::number(((float)(boundings_sortie[i].x+boundings_sortie[i].width))/((float)largeur_gene));
+        txt+=QString::fromStdString("\t");
     ///number of the image
-        txt+=to_string(nb_image[i]);
-        txt+="\n";
+        txt+=QString::number(nb_image[i]);
+        txt+=QString::fromStdString("\n");
     ///relative width (width/average_width)
-        txt+=to_string((float)boundings_sortie[i].width/(float)average_width);
-        txt+="\n";
+        txt+=QString::number((float)boundings_sortie[i].width/(float)average_width);
+        txt+=QString::fromStdString("\n");
 
 
     }
-    return txt;
+    return txt.toStdString();
 
 }
 
