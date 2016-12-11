@@ -6,13 +6,13 @@
 
 QT       += core gui
 
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-CONFIG += c++11
 TARGET = atlas_qt
 TEMPLATE = app
 
 INCLUDEPATH += /usr/include/opencv
+INCLUDEPATH +=header
+INCLUDEPATH +=src
 
 LIBS += -L /usr/local/lib/
 LIBS += -lopencv_core
@@ -27,34 +27,16 @@ LIBS += -lopencv_contrib
 LIBS += -lopencv_legacy
 LIBS += -lopencv_flann
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    atlas.cpp \
-    divers.cpp \
-    dialog.cpp \
-    atlas_i.cpp \
-    src/atlas.cpp \
+SOURCES += src/atlas.cpp \
     src/atlas_i.cpp \
     src/dialog.cpp \
-    src/divers.cpp \
     src/main.cpp \
-    src/mainwindow.cpp \
-    moc_dialog.cpp \
-    moc_mainwindow.cpp
+    src/mainwindow.cpp
 
-HEADERS  += mainwindow.h \
-    atlas.h \
-    dialog.h \
-    atlas_i.h \
-    header/atlas.h \
+HEADERS  += header/atlas.h \
     header/atlas_i.h \
     header/dialog.h \
-    header/divers.h \
-    header/mainwindow.h \
-    header/ui_dialog.h \
-    header/ui_mainwindow.h
+    header/mainwindow.h
 
-FORMS    += mainwindow.ui \
-    dialog.ui \
-    form/dialog.ui \
+FORMS    += form/dialog.ui \
     form/mainwindow.ui
