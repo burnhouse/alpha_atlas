@@ -20,7 +20,7 @@ class atlas{
         vector <string> nom_rect;
         vector <int>nb_image;
         float average_width;
-        int cpt_image=0;
+        int cpt_image;
 
 	public:
         atlas(int ,int ,int );
@@ -31,5 +31,6 @@ class atlas{
         string get_nom(int );
 		~atlas();
 		vector <Rect> Get();
+        int Get_image(int);
 };
 #endif

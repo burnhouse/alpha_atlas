@@ -22,7 +22,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -31,16 +31,17 @@ static const uint qt_meta_data_MainWindow[] = {
 
  // slots: signature, parameters, type, tag, flags
       12,   11,   11,   11, 0x0a,
-      22,   11,   11,   11, 0x0a,
-      29,   11,   11,   11, 0x0a,
-      39,   11,   11,   11, 0x0a,
+      18,   11,   11,   11, 0x0a,
+      28,   11,   11,   11, 0x0a,
+      35,   11,   11,   11, 0x0a,
+      45,   11,   11,   11, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MainWindow[] = {
-    "MainWindow\0\0new_img()\0save()\0im_suiv()\0"
-    "im_prev()\0"
+    "MainWindow\0\0vue()\0new_img()\0save()\0"
+    "im_suiv()\0im_prev()\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -49,10 +50,11 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         Q_ASSERT(staticMetaObject.cast(_o));
         MainWindow *_t = static_cast<MainWindow *>(_o);
         switch (_id) {
-        case 0: _t->new_img(); break;
-        case 1: _t->save(); break;
-        case 2: _t->im_suiv(); break;
-        case 3: _t->im_prev(); break;
+        case 0: _t->vue(); break;
+        case 1: _t->new_img(); break;
+        case 2: _t->save(); break;
+        case 3: _t->im_suiv(); break;
+        case 4: _t->im_prev(); break;
         default: ;
         }
     }
@@ -91,9 +93,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 5;
     }
     return _id;
 }

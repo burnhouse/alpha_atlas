@@ -18,6 +18,7 @@ atlas::atlas(int hg,int lg,int nbl){
 		hauteur_gene=hg;
 		largeur_gene=lg;
 		nb_lignes=nbl;
+        cpt_image=0;
 
 
 
@@ -26,23 +27,25 @@ atlas::atlas(int hg,int lg,int nbl){
 
 void atlas::add_image(vector <Rect> bb){
     cpt_image+=1;
-    vector<Rect> boundings;
+    //
 
     ///get rif of inner rectangles which are useless
     bool b=true;
-    //Rect *a;
     for(int it=1 ; it < bb.size(); it++ ) {
         b=true;
         for(int it2=1 ; it2 < bb.size(); it2++ ) {
 
-            if(((bb[it2] & bb[it])==bb[it])&it!=it2){
+            if(((bb[it2] & bb[it])==bb[it])&(it!=it2)){
                 b=false;
             }
         }
-        if(b){cout<<"ok";
+        //if the rectangle is not inside another one then keep
+        if(b){
             boundings.push_back(bb[it]);
+            nb_image.push_back(cpt_image);
         }
     }
+
 
     ///find the lines
         vector <float> yligne;
@@ -93,13 +96,13 @@ void atlas::add_image(vector <Rect> bb){
         }
 
 
-
+     boundings_sortie.clear();
     ///reset the coordinates of the rectangles
         float wit=0;
         for(int i=0;i<boundings.size();i++){
             boundings_sortie.push_back(Rect(boundings[i].x ,  boundings[i].y+dist_ligne_haut[i]-max_height , boundings[i].width ,max_height+abs(dlmin)));
             nom_rect.push_back("\\");
-            nb_image.push_back(cpt_image);
+
         }
 
     ///find the average width
@@ -131,6 +134,13 @@ void atlas::set_nom(string s,int index){
 
 string atlas::get_nom(int index){
     return nom_rect[index];
+
+}
+
+
+int atlas::Get_image(int index){
+
+    return nb_image[index];
 
 }
 

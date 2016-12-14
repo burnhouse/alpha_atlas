@@ -5,7 +5,7 @@
 #include "atlas.h"
 using namespace cv;
 Mat src;
-int thresh2 = 100;
+int thresh2 = 255;
 int max_thresh2 = 255;
 RNG rng2(12345);
 
@@ -18,7 +18,8 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.show();
-    Dialog d; d.show();
+    Dialog d;
+    d.show();
       d.set_mw(&w);
 
     return a.exec();
