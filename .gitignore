@@ -1,6 +1,2 @@
-moc_dialog.o
-moc_mainwindow.o
-main.o
-mainwindow.o
-atlas.o
-atlas_i.o 
+*o
+
