@@ -7,12 +7,12 @@ The easiest way is to download Qt creator and configure it for opencv.
 
 # Output
 The uv will be saved in a tsv file :
-NAME_OF_THE_TEXTURE 
-BOTTOM
-UP 
-LEFT  
-RIGHT 
-NUMBER_OF_THE_IMAGE 
+NAME_OF_THE_TEXTURE /   
+BOTTOM   /   
+UP   /   
+LEFT   /    
+RIGHT   /    
+NUMBER_OF_THE_IMAGE  /   
 RELATIVE_WIDTH
 
 # Prework
